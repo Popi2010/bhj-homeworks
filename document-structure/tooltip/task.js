@@ -1,27 +1,24 @@
-const tooltipsList = [...document.querySelectorAll(".has-tooltip")];
-const tooltip = document.querySelector(".tooltip");
+document.addEventListener('DOMContentLoaded', () => {
+  const tooltips = Array.from(document.querySelectorAll('.has-tooltip'));
+  const tooltipDiv = document.createElement('div');
+  tooltipDiv.className = 'tooltip';
 
+  tooltips.forEach(element => {
+      element.addEventListener('click', (event) => {
+          event.preventDefault();
 
-tooltipsList.forEach(
-  element => {
-    element.addEventListener(
-      "click",
-      event => {
-        event.preventDefault();
-        let { bottom, left } = element.getBoundingClientRect();
-        let message = element.title;
-        tooltipMessage = tooltip.innerText;
-        if (message === tooltipMessage) {
-          tooltip.classList.toggle("tooltip_active");
-          return;
-        }
-        tooltip.innerText = message;
-        tooltip.style.top = `${bottom}px`;
-        tooltip.style.left = `${left}px`;
-        tooltip.classList.add("tooltip_active");
-      }
-    );
-  }
-);
+          let title = element.getAttribute('title');
+          tooltipDiv.textContent = title;
 
-window.addEventListener("scroll", () => tooltip.classList.remove("tooltip_active"));
+          let elementRect = element.getBoundingClientRect();
+          tooltipDiv.style.left = `${elementRect.left}px`;
+          tooltipDiv.style.top = `${elementRect.bottom + window.scrollY}px`;
+
+          if (!element.nextElementSibling || !element.nextElementSibling.classList.contains('tooltip')) {
+              element.insertAdjacentElement('afterend', tooltipDiv);
+          }
+
+          tooltipDiv.classList.toggle('tooltip_active');
+      });
+  });
+});
